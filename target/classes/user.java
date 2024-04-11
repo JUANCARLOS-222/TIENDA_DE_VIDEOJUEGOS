@@ -6,6 +6,7 @@ public class user {
 	String apellido;
 	int numeroTelefono;
 	String email;
+	String si;
 	
 	public user(String nombre, String apellido, int numeroTelefono, String email ) {
 		this.nombre = nombre;
