@@ -7,6 +7,7 @@ public class user {
 	int numeroTelefono;
 	String email;
 	String si;
+	String no;
 	
 	public user(String nombre, String apellido, int numeroTelefono, String email ) {
 		this.nombre = nombre;
