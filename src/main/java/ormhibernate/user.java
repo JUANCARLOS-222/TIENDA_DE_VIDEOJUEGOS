@@ -1,19 +1,29 @@
 package ormhibernate;
 
+
 import javax.persistence.*;
-
-public class user {
-
+@Entity
+@Table(name="user")
+public class User {
+	@Id 
+	@GeneratedValue(strategy=GenerationType.IDENTITY)
+	int id_usuario;
 	String nombre;
 	String apellido;
-	int numeroTelefono;
+	int numero_telefono;
 	String email;
+	String contrasenya;
 	
-	public user(String nombre, String apellido, int numeroTelefono, String email ) {
+	public User(String nombre, String apellido, int numeroTelefono, String email, String contrasenya ) {
 		this.nombre = nombre;
 		this.apellido = apellido;
-		this.numeroTelefono = numeroTelefono;
+		this.numero_telefono = numeroTelefono;
 		this.email = email;
+		this.contrasenya = contrasenya;
+			
+	}
+	public User() {
+		
 	}
 	
 	public String getNombre() {
@@ -33,11 +43,11 @@ public class user {
 	}
 	
 	public int getNumeroTelefono() {
-		return numeroTelefono;
+		return numero_telefono;
 	}
 	
 	public void setNumeroTelefono(int numeroTelefono) {
-		this.numeroTelefono = numeroTelefono;
+		this.numero_telefono = numeroTelefono;
 	}
 	
 	public String getEmail() {
@@ -47,5 +57,13 @@ public class user {
 	public void setEmail(String email) {
 		this.email = email;
 	}
+	
+	public void setContrasenya(String contrasenya) {
+		this.contrasenya = contrasenya;
+	}
+	
+	
+	
+	
 	
 }
