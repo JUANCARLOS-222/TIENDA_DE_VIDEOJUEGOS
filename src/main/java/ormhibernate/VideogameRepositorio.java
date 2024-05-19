@@ -43,11 +43,26 @@ public class VideogameRepositorio implements repositorio<Videogames>{
 		}*/
 	}
 	
-	public List<Videogames> findVideogamesByConsoleId(int consoleId) {
+    public List<Videogames> findVideogamesByConsoleId(int consoleId) {
+
+        	session.beginTransaction();
+            //String hql = "SELECT v.nombre, v.informacion, v.id_videogame FROM gameshopdb.videogames v  LEFT JOIN gameshopdb.console_videogames cv on v.id_videogame = cv.id_videogame left join gameshopdb.console c on c.id_consola = cv.id_consola  WHERE cv.id_consola =  :consoleId";
+        	String hql = "SELECT v FROM Videogames v " +
+                    "LEFT JOIN v.consoles c " +
+                    "WHERE c.id_consola = :consoleId";
+        	
+        	Query<Videogames> query = session.createQuery(hql, Videogames.class);
+            query.setParameter("consoleId", consoleId);
+            return query.list();
+
+            
+    }
+	
+	/*public List<Videogames> findVideogamesByConsoleId(int consoleId) {
 	    try {
 	        session.beginTransaction();
 	        Query<Videogames> query = session.createQuery(
-	            "SELECT v.nombre, v.informacion, id_videojuego FROM gameshopdb.videogames v  LEFT JOIN gameshopdb.console_videogames cv on id_videojuego = cv.videojuego_id left join gameshopdb.console c on c.id_consola = cv.console_id  WHERE cv.console_id =  :consoleId",
+	            "SELECT v.nombre, v.informacion, v.id_videogame FROM gameshopdb.videogames v  LEFT JOIN gameshopdb.console_videogames cv on v.id_videogame = cv.id_videogame left join gameshopdb.console c on c.id_consola = cv.id_consola  WHERE cv.id_consola =  :consoleId",
 	            Videogames.class
 	        );
 	        query.setParameter("consoleId", consoleId);
@@ -62,7 +77,7 @@ public class VideogameRepositorio implements repositorio<Videogames>{
 	        session.close();
 	    }
 	    return null;
-	}
+	}*/
 	
 	
 	

@@ -10,21 +10,25 @@ import javax.persistence.*;
 public class Videogames {
 	@Id 
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
-	int id_videojuego;
+	int id_videogame;
 	String nombre;
 	String informacion;
-	@ManyToMany
-	@JoinTable(
-	name = "console_videogames", // Nombre de la tabla de unión
-	joinColumns = @JoinColumn(name = "videogame_id"), // Columna en la tabla de unión que apunta a esta entidad (Videogame)
-	inverseJoinColumns = @JoinColumn(name = "console_id") // Columna en la tabla de unión que apunta a la entidad asociada (Console)
-	)
+	float precio;
+	float precio_min;
+	float precio_max;
+	
+    @ManyToMany
+    @JoinTable(
+        name = "console_videogames",
+        joinColumns = @JoinColumn(name = "id_videogame"),
+        inverseJoinColumns = @JoinColumn(name = "id_consola")
+    )
 	private Set<Console> consoles = new HashSet<Console>();
 	
 	
 	public Videogames(int id_videojuego, String nombre, String informacion) {
 		this.nombre = nombre;
-		this.id_videojuego = id_videojuego;
+		this.id_videogame = id_videojuego;
 		this.informacion = informacion;	
 	}
 	public Videogames() {
@@ -40,11 +44,11 @@ public class Videogames {
 	}
 	
 	public int getIdVideogame() {
-		return id_videojuego;
+		return id_videogame;
 	}
 	
 	public void setIdVideogame(int id_videojuego) {
-		this.id_videojuego = id_videojuego;
+		this.id_videogame = id_videojuego;
 	}
 	
 	public String getInformacion() {
@@ -54,4 +58,8 @@ public class Videogames {
 	public void setInformacion(String informacion) {
 		this.informacion = informacion;
 	}
+	
+    public void setConsoles(Set<Console> consoles) {
+        this.consoles = consoles;
+    }
 }

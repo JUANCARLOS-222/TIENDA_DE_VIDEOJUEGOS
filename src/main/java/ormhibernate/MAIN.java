@@ -175,9 +175,12 @@ public class MAIN {
 		int opcion = 0;
 		verCatalogo(session);
 		opcion = lector.nextInt();
+		
 		VideogameRepositorio videogame = new VideogameRepositorio(session);
-		/*videogame.findVideogamesByConsoleId(opcion);*/
-		List<Videogames> Allvideojuegos = videogame.findAll();
+		
+		
+		List<Videogames> Allvideojuegos = videogame.findVideogamesByConsoleId(opcion);
+		//List<Videogames> Allvideojuegos = videogame.findAll();
 		for (Videogames videogames : Allvideojuegos) {
 			System.out.println(videogames.nombre);
 		}
