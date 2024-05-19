@@ -15,6 +15,8 @@
         
        
         <mapping class="ormhibernate.User"/>
+        <mapping class="ormhibernate.Console"/>
+        <mapping class="ormhibernate.Videogames"/>
 
     </session-factory>
 </hibernate-configuration>
