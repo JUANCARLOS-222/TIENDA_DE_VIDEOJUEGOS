@@ -53,8 +53,8 @@ public class VideogameRepositorio implements repositorio<Videogames>{
         	
         	Query<Videogames> query = session.createQuery(hql, Videogames.class);
             query.setParameter("consoleId", consoleId);
+            session.getTransaction().commit();
             return query.list();
-
             
     }
 	
