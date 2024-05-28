@@ -17,12 +17,10 @@ import java.util.regex.Pattern;
 
 public class MAIN {
 	static Scanner lector = new Scanner(System.in);
-	static Session session;
 
 	public static void main(String[] args) {
 
-		session = crearSesion();
-		menú(session);
+		menú();
 
 	}
 
@@ -44,67 +42,94 @@ public class MAIN {
 		return session;
 	}
 
-	public static void crearUsuario(Session session) {
+	public static void crearUsuario() {
 		Scanner scanner = new Scanner(System.in);
 		User user = new User();
 		try {
-			System.out.println("Introduce tu nombre");
-			user.setNombre(scanner.nextLine());
-			System.out.println("Introduce tu apellido");
-			user.setApellido(scanner.nextLine());
-			System.out.println("Introduce tu numero de telefono");
-			user.setNumeroTelefono(scanner.nextInt());
-			scanner.nextLine();
-			System.out.println("Introduce tu gmail");
-			user.setEmail(scanner.nextLine());
-
-			Pattern p = Pattern.compile(
-					"^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$");
-			Matcher m = p.matcher(user.email);
-			if (m.matches()) {
+			boolean usuarioCorrecto = false;
+			do {
+				System.out.println("Introduce tu nombre");
+				user.setNombre(scanner.nextLine());
+				System.out.println("Introduce tu apellido");
+				user.setApellido(scanner.nextLine());
+				System.out.println("Introduce tu numero de telefono");
+				user.setNumeroTelefono(scanner.nextInt());
+				scanner.nextLine();
+				System.out.println("Introduce tu gmail");
+				user.setEmail(scanner.nextLine());
 				System.out.println("Introduce tu contraseña");
 				user.setContrasenya(scanner.nextLine());
-
-				System.out.println("EXCELSIOR!");
-
-				catalogo(session);
-
-				UserRepositorio userrep = new UserRepositorio(session);
-				userrep.save(user);
-
-				/* Session session = crearSesion(); */
-
-			} else {
-				System.err.println("Introduce el email correctamete");
-				menú(session);
-			}
+				usuarioCorrecto=datosCorrectosUsuario(user);
+				System.out.println(usuarioCorrecto);
+				if(usuarioCorrecto) {
+					System.out.println(usuarioCorrecto);
+					Session session = crearSesion();
+					UserRepositorio userrep = new UserRepositorio(session);
+					userrep.save(user);
+					
+					/* Session session = crearSesion(); */
+					panelUsuario();
+				}
+				
+			}while(!usuarioCorrecto);
+			
 		} catch (InputMismatchException e) {
 			System.err.println("Introduce el número de teléfono correctamente");
-			menú(session);
+		}
+	}
+	public static boolean comprobarEmail(String email) {
+		Pattern p = Pattern.compile(
+				"^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$");
+		Matcher m = p.matcher(email);
+		if (m.matches()) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+	public static boolean datosCorrectosUsuario(User user) {
+		
+		if ((user.nombre == null || user.nombre.isEmpty()) ||
+				(user.apellido == null || user.apellido.isEmpty()) ||
+				(user.contrasenya == null || user.contrasenya.isEmpty()) ||
+				(user.email == null || user.email.isEmpty())) {
+			System.out.println("Propiedades vacias");
+			return false;
+		}else {
+			if(comprobarEmail(user.email)) {
+				System.out.println("El email es correcto");
+				return true;
+			}else {
+				System.out.println("El correo es incorrecto");
+				return false;
+			}
+			
 		}
 	}
 
-	public static boolean loginUsuario(Session session, String email, String contrasenya) {
+	public static configuracionUser loginUsuario(String email, String contrasenya) {
 		User login = new User();
 		/* Session session = crearSesion(); */
+		Session session = crearSesion();
 		UserRepositorio userrep = new UserRepositorio(session);
 		List<User> listaUser = userrep.findAll();
-
+		boolean contrasenyaCorrecta=false;
+		int perfil=0;
 		for (User user : listaUser) {
 			
 			if (user.email.equals(email)) {
 				if (user.contrasenya.equals(contrasenya)) {
-					return true;
-				} else {
-					return false;
+				contrasenyaCorrecta=true;
+				perfil=user.id_perfiles;
 				}
 			}
 		}
-		return false;
+		configuracionUser config = new configuracionUser(perfil,contrasenyaCorrecta);
+		return config;
 
 	}
 
-	public static void menú(Session session) {
+	public static void menú() {
 
 		String mensaje = "BIENVENIDO A JAC GAMES";
 		int longitud = mensaje.length();
@@ -136,33 +161,33 @@ public class MAIN {
 				String email = lector.nextLine();
 				System.out.println("Introduce la contraseña");
 				String contrasenya = lector.nextLine();
-				boolean existUsuario = loginUsuario(session, email, contrasenya);
-				if (existUsuario && email.equals("juancarlos@gmail.com") || email.equals("albert@gmail.com") || email.equals("judith@gmail.com")) {
-				panelAdministrador(session);
-				} else if (existUsuario) {
+				configuracionUser config = loginUsuario(email, contrasenya);
+				if (config.usuarioCorrecto && config.perfil==1) {
+				panelAdministrador();
+				} else if (config.usuarioCorrecto && config.perfil==2) {
 					System.out.println("Puede acceder a la aplicación");
 					// catalogo(session);
-					panelUsuario(session);
+					panelUsuario();
 				} else {
 					System.err.println("Ese usuario no existe");
-					menú(session);
+					menú();
 				}
 				break;
 			case 2:
-				crearUsuario(session);
+				crearUsuario();
 				break;
 			case 3:
 				System.out.println("Has salido");
 				break;
 			default:
 				System.err.println("No es una opción válida");
-				menú(session);
+				menú();
 				break;
 			}
 		} catch (InputMismatchException e) {
 			System.err.println("Elige una de las opciones");
 			lector.nextLine();
-			menú(session);
+			menú();
 		}
 
 		/*
@@ -181,7 +206,7 @@ public class MAIN {
 		 */
 	}
 
-	public static void verCatalogo(Session session) {
+	public static void verCatalogo() {
 
 		String mensaje = "Este es nuestro catalogo";
 		int longitud = mensaje.length();
@@ -198,7 +223,7 @@ public class MAIN {
 		}
 
 		System.out.println("");
-		/* Session session = crearSesion(); */
+		Session session = crearSesion();
 		ConsoleRepositorio console = new ConsoleRepositorio(session);
 		List<Console> con = console.findAll();
 
@@ -208,18 +233,18 @@ public class MAIN {
 		System.out.println("6 Salir");
 	}
 
-	public static void catalogo(Session session) {
+	public static void catalogo() {
 		try {
 			int opcion = 0;
 			while (opcion != 6) {
 
-				verCatalogo(session);
+				verCatalogo();
 				opcion = lector.nextInt();
 
 				if (opcion == 6) {
-					panelUsuario(session);
+					panelUsuario();
 				} else {
-
+					Session session = crearSesion();
 					VideogameRepositorio videogame = new VideogameRepositorio(session);
 
 					List<Videogames> Allvideojuegos = videogame.findVideogamesByConsoleId(opcion);
@@ -232,11 +257,11 @@ public class MAIN {
 		} catch (InputMismatchException e) {
 			System.err.println("Elige una de las opciones");
 			lector.nextLine();
-			catalogo(session);
+			catalogo();
 		}
 	}
 
-	public static void panelUsuario(Session session) {
+	public static void panelUsuario() {
 		int opcion = 0;
 		System.out.println("1 - Ver catálogo");
 		System.out.println("2 - Comprar videojuego");
@@ -246,7 +271,7 @@ public class MAIN {
 		opcion = lector.nextInt();
 		switch (opcion) {
 		case 1:
-			catalogo(session);
+			catalogo();
 			break;
 		case 2:
 			System.out.println("Comprar videojuego");
@@ -260,17 +285,17 @@ public class MAIN {
 		case 5:
 			System.out.println("Que la fuerza te acompañe");
 			lector.nextLine();
-			menú(session);
+			menú();
 			break;
 		default:
 			System.out.println("Opción no válida");
 			lector.nextLine();
-			panelUsuario(session);
+			panelUsuario();
 			break;
 		}
 	}
 
-	public static void panelAdministrador(Session session) {
+	public static void panelAdministrador() {
 		int opcion = 0;
 		System.out.println("1 - Eliminar videojuego");
 		System.out.println("2 - Añadir videojuego");
@@ -294,7 +319,7 @@ public class MAIN {
 		case 5:
 			System.out.println("Has salido");
 			lector.nextLine();
-			menú(session);
+			menú();
 			break;
 		default:
 			System.out.println("Opción no válida");

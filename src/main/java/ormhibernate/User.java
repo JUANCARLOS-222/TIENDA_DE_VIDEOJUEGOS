@@ -13,16 +13,20 @@ public class User {
 	int numero_telefono;
 	String email;
 	String contrasenya;
+	int id_perfiles;
 	
-	public User(String nombre, String apellido, int numeroTelefono, String email, String contrasenya ) {
+	public User(String nombre, String apellido, int numeroTelefono, String email, String contrasenya, int id_perfiles ) {
 		this.nombre = nombre;
 		this.apellido = apellido;
 		this.numero_telefono = numeroTelefono;
 		this.email = email;
 		this.contrasenya = contrasenya;
+		this.id_perfiles = id_perfiles;
 			
 	}
+	
 	public User() {
+		this.id_perfiles = 2;
 		
 	}
 	
