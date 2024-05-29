@@ -43,6 +43,32 @@ public class ConsoleRepositorio implements repositorio<Console>{
 		}
 	}
 	
+	public void deleteById(int id_consola) {
+        // TODO Auto-generated method stub
+        session.beginTransaction();
+        session.clear();
+        Console consola = new Console();
+        consola.setIdConsola(id_consola);
+        session.delete(id_consola);
+        session.getTransaction().commit();
+
+    }
+	
+	public Console findOneById(int id) {
+		// TODO Auto-generated method stub
+		session.beginTransaction();
+		String hql = "FROM Console where id_consola=: id";
+
+		Query<Console> query = session.createQuery(hql, Console.class);
+		
+		
+		query.setParameter("id", id);
+		Console co = query.uniqueResult();
+		session.getTransaction().commit();
+		return co;
+		
+	}
+	
 	
 	
 	

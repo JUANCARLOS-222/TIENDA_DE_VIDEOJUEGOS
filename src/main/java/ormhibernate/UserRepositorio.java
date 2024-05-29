@@ -43,6 +43,27 @@ public class UserRepositorio implements repositorio<User>{
 		}
 	}
 	
+	public void deleteById(int id_usuario) {
+        // TODO Auto-generated method stub
+        session.beginTransaction();
+        session.clear();
+        User usuario = new User();
+        usuario.setId_usuario(id_usuario);
+        session.delete(id_usuario);
+        session.getTransaction().commit();
+
+    }
+	public User findOneById(int id) {
+		// TODO Auto-generated method stub
+		
+		String hql = "FROM user where id_usuario=: id";
+
+		Query<User> query = session.createQuery(hql, User.class);
+		query.setParameter("id", id);
+		session.getTransaction().commit();
+		return new User();
+		
+	}
 	
 	
 	

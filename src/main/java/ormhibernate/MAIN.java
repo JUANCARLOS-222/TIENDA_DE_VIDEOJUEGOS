@@ -1,5 +1,8 @@
 package ormhibernate;
 
+import java.util.logging.Logger;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.InputMismatchException;
 import java.util.List;
 
@@ -12,13 +15,19 @@ import org.hibernate.boot.registry.StandardServiceRegistry;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 
 import java.util.Scanner;
+import java.util.Set;
+import java.util.logging.LogManager;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import java.util.logging.Level;
 
 public class MAIN {
 	static Scanner lector = new Scanner(System.in);
 
 	public static void main(String[] args) {
+
+		Logger.getLogger("org.hibernate").setLevel(Level.OFF);
 
 		menú();
 
@@ -33,12 +42,13 @@ public class MAIN {
 	}
 
 	public static Session crearSesion() {
-		System.out.println("Iniciando configuración hibernate...");
+		System.out.println("\nIniciando configuración hibernate...");
 		final StandardServiceRegistry registro = new StandardServiceRegistryBuilder().configure().build();
 		final SessionFactory factory = new MetadataSources(registro).buildMetadata().buildSessionFactory();
-		System.out.println("Abriendo conexión a BD...");
+		LogManager.getLogManager().reset();
+		System.out.println("\nAbriendo conexión a BD...");
 		final Session session = factory.openSession();
-		System.out.println("Conexión abierta a BD...");
+		System.out.println("\nConexión abierta a BD...\n\n");
 		return session;
 	}
 
@@ -59,27 +69,28 @@ public class MAIN {
 				user.setEmail(scanner.nextLine());
 				System.out.println("Introduce tu contraseña");
 				user.setContrasenya(scanner.nextLine());
-				usuarioCorrecto=datosCorrectosUsuario(user);
+				usuarioCorrecto = datosCorrectosUsuario(user);
 				System.out.println(usuarioCorrecto);
-				if(usuarioCorrecto) {
+				if (usuarioCorrecto) {
 					System.out.println(usuarioCorrecto);
 					Session session = crearSesion();
 					UserRepositorio userrep = new UserRepositorio(session);
 					userrep.save(user);
-					
+
 					/* Session session = crearSesion(); */
 					panelUsuario();
 				}
-				
-			}while(!usuarioCorrecto);
-			
+
+			} while (!usuarioCorrecto);
+
 		} catch (InputMismatchException e) {
 			System.err.println("Introduce el número de teléfono correctamente");
 		}
 	}
+
 	public static boolean comprobarEmail(String email) {
-		Pattern p = Pattern.compile(
-				"^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$");
+		Pattern p = Pattern
+				.compile("^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$");
 		Matcher m = p.matcher(email);
 		if (m.matches()) {
 			return true;
@@ -87,23 +98,23 @@ public class MAIN {
 			return false;
 		}
 	}
+
 	public static boolean datosCorrectosUsuario(User user) {
-		
-		if ((user.nombre == null || user.nombre.isEmpty()) ||
-				(user.apellido == null || user.apellido.isEmpty()) ||
-				(user.contrasenya == null || user.contrasenya.isEmpty()) ||
-				(user.email == null || user.email.isEmpty())) {
+
+		if ((user.nombre == null || user.nombre.isEmpty()) || (user.apellido == null || user.apellido.isEmpty())
+				|| (user.contrasenya == null || user.contrasenya.isEmpty())
+				|| (user.email == null || user.email.isEmpty())) {
 			System.out.println("Propiedades vacias");
 			return false;
-		}else {
-			if(comprobarEmail(user.email)) {
+		} else {
+			if (comprobarEmail(user.email)) {
 				System.out.println("El email es correcto");
 				return true;
-			}else {
+			} else {
 				System.out.println("El correo es incorrecto");
 				return false;
 			}
-			
+
 		}
 	}
 
@@ -113,18 +124,18 @@ public class MAIN {
 		Session session = crearSesion();
 		UserRepositorio userrep = new UserRepositorio(session);
 		List<User> listaUser = userrep.findAll();
-		boolean contrasenyaCorrecta=false;
-		int perfil=0;
+		boolean contrasenyaCorrecta = false;
+		int perfil = 0;
 		for (User user : listaUser) {
-			
+
 			if (user.email.equals(email)) {
 				if (user.contrasenya.equals(contrasenya)) {
-				contrasenyaCorrecta=true;
-				perfil=user.id_perfiles;
+					contrasenyaCorrecta = true;
+					perfil = user.id_perfiles;
 				}
 			}
 		}
-		configuracionUser config = new configuracionUser(perfil,contrasenyaCorrecta);
+		configuracionUser config = new configuracionUser(perfil, contrasenyaCorrecta);
 		return config;
 
 	}
@@ -162,10 +173,9 @@ public class MAIN {
 				System.out.println("Introduce la contraseña");
 				String contrasenya = lector.nextLine();
 				configuracionUser config = loginUsuario(email, contrasenya);
-				if (config.usuarioCorrecto && config.perfil==1) {
-				panelAdministrador();
-				} else if (config.usuarioCorrecto && config.perfil==2) {
-					System.out.println("Puede acceder a la aplicación");
+				if (config.usuarioCorrecto && config.perfil == 1) {
+					panelAdministrador();
+				} else if (config.usuarioCorrecto && config.perfil == 2) {
 					// catalogo(session);
 					panelUsuario();
 				} else {
@@ -223,6 +233,19 @@ public class MAIN {
 		}
 
 		System.out.println("");
+		/*
+		 * Session session = crearSesion(); ConsoleRepositorio console = new
+		 * ConsoleRepositorio(session); List<Console> con = console.findAll();
+		 * 
+		 * for (Console console2 : con) { System.out.println(console2.id_consola + " " +
+		 * console2.nombre + " "); }
+		 */
+		mostrarConsolas();
+		System.out.println("6 Salir");
+
+	}
+
+	public static void mostrarConsolas() {
 		Session session = crearSesion();
 		ConsoleRepositorio console = new ConsoleRepositorio(session);
 		List<Console> con = console.findAll();
@@ -230,7 +253,6 @@ public class MAIN {
 		for (Console console2 : con) {
 			System.out.println(console2.id_consola + " " + console2.nombre + " ");
 		}
-		System.out.println("6 Salir");
 	}
 
 	public static void catalogo() {
@@ -274,7 +296,7 @@ public class MAIN {
 			catalogo();
 			break;
 		case 2:
-			System.out.println("Comprar videojuego");
+			System.out.println("Que juego quieres comprar?");
 			break;
 		case 3:
 			System.out.println("Vender videojuego");
@@ -305,10 +327,13 @@ public class MAIN {
 		opcion = lector.nextInt();
 		switch (opcion) {
 		case 1:
-			System.out.println("Eliminar videojuego");
+			System.out.println("Selecciona el videojuego que deseas borrar");
+			mostrarVideojuegos();
+			borrarVideojuegos();
 			break;
 		case 2:
-			System.out.println("Añadir videojuego");
+			System.out.println("Introduce los datos del juego que deseas añadir");
+			guardarVideojuego();
 			break;
 		case 3:
 			System.out.println("Modificar catálogo");
@@ -325,6 +350,84 @@ public class MAIN {
 			System.out.println("Opción no válida");
 			break;
 		}
+
+	}
+
+	public static void mostrarVideojuegos() {
+		Session session = crearSesion();
+		VideogameRepositorio videogame = new VideogameRepositorio(session);
+
+		List<Videogames> Allvideojuegos = videogame.findVideogamesByConsoleId(1);
+		// List<Videogames> Allvideojuegos = videogame.findAll();
+		for (Videogames videogames : Allvideojuegos) {
+			System.out.println(videogames.id_videogame + " - " + videogames.nombre);
+		}
+
+	}
+
+	public static void borrarVideojuegos() {
+		Session session = crearSesion();
+		VideogameRepositorio videogame = new VideogameRepositorio(session);
+
+		System.out.println("Que videojuego quieres borrar");
+		int opcion = lector.nextInt();
+
+		videogame.deleteById(opcion);
+
+	}
+
+	public static void crearConsola(Console consola) {
+
+		Session session = crearSesion();
+		ConsoleRepositorio consolrep = new ConsoleRepositorio(session);
+		consolrep.save(consola);
+	}
+
+	public static void crearVideogame(Videogames videogame) {
+		Session session = crearSesion();
+		VideogameRepositorio videorep = new VideogameRepositorio(session);
+		videorep.save(videogame);
+	}
+
+	public static void guardarVideojuego() {
+		Videogames videojuego = new Videogames();
+		System.out.println("Inserte el nombre del videojuego:");
+		videojuego.setNombre(lector.nextLine());
+		lector.nextLine();
+		System.out.println("Inserte la informacion sobre su videojuego:");
+		videojuego.setInformacion(lector.nextLine());
+		lector.nextLine();
+		System.out.println("Introduce el precio de su videojuego:");
+		videojuego.setPrecio(lector.nextFloat());
+		lector.nextLine();
+		System.out.println("Inserte el precio minimo de su videojuego:");
+		videojuego.setPrecio_min(lector.nextFloat());
+		lector.nextLine();
+		System.out.println("Inserte el precio maximo de su videojuego:");
+		videojuego.setPrecio_max(lector.nextFloat());
+		lector.nextLine();
+		System.out.println("A cuantas consolas va a pertenecer su videojuego");
+		int resp = lector.nextInt();
+		lector.nextLine();
+		mostrarConsolas();
+
+		Session session = crearSesion();
+		ConsoleRepositorio consolerep = new ConsoleRepositorio(session);
+		List<Console> lista = new ArrayList<Console>();
+		for (int i = 0; i < resp; i++) {
+			System.out.println("Escoge la consola");
+			int eleccion = lector.nextInt();
+			lector.nextInt();
+			Console co = consolerep.findOneById(eleccion);
+			System.out.println(co.id_consola + " hola");
+			if (co != null) {
+				lista.add(co);
+			}
+		}
+		Set<Console> consolas = new HashSet<Console>(lista);
+		videojuego.setConsoles(consolas);
+		VideogameRepositorio videorep = new VideogameRepositorio(session);
+		videorep.save(videojuego);
 
 	}
 

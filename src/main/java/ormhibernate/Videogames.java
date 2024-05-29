@@ -47,7 +47,7 @@ public class Videogames {
 		return id_videogame;
 	}
 	
-	public void setIdVideogame(int id_videojuego) {
+	public  void setIdVideogame(int id_videojuego) {
 		this.id_videogame = id_videojuego;
 	}
 	
@@ -61,5 +61,17 @@ public class Videogames {
 	
     public void setConsoles(Set<Console> consoles) {
         this.consoles = consoles;
+    }
+    
+    public void setPrecio(float precio) {
+    	this.precio = precio;
+    }
+    
+    public void setPrecio_min(float precio_min) {
+    	this.precio_min = precio_min;
+    }
+    
+    public void setPrecio_max(float precio_max) {
+    	this.precio_max = precio_max;
     }
 }
