@@ -69,7 +69,13 @@ public class ConsoleRepositorio implements repositorio<Console>{
 		
 	}
 	
-	
+	public void updateById(int id, Console consola) {//actualizar por ID
+		// TODO Auto-generated method stub
+		session.beginTransaction();
+		consola.setIdConsola(id);
+		session.update(consola);
+		session.getTransaction().commit();
+	}
 	
 	
 }

@@ -69,7 +69,7 @@ public class VideogameRepositorio implements repositorio<Videogames> {
 
 	public Videogames findOneById(int id) {
 		// TODO Auto-generated method stub
-		
+		session.beginTransaction();
 		String hql = "FROM Videogames where id_videogame=: id";
 
 		Query<Videogames> query = session.createQuery(hql, Videogames.class);
@@ -78,7 +78,16 @@ public class VideogameRepositorio implements repositorio<Videogames> {
 		return new Videogames();
 		
 	}
+	
+	public void updateById(int id, Videogames videojuego) {//actualizar por ID
+		// TODO Auto-generated method stub
+		session.beginTransaction();
+		videojuego.setIdVideogame(id);
+		session.update(videojuego);
+		session.getTransaction().commit();
+	}
 
+	
 	/*
 	 * public List<Videogames> findVideogamesByConsoleId(int consoleId) { try {
 	 * session.beginTransaction(); Query<Videogames> query = session.createQuery(

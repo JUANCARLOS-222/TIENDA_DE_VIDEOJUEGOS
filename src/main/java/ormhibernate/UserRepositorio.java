@@ -65,6 +65,14 @@ public class UserRepositorio implements repositorio<User>{
 		
 	}
 	
+	public void updateById(int id, User usuario) {//actualizar por ID
+		// TODO Auto-generated method stub
+		session.beginTransaction();
+		usuario.setId_usuario(id);
+		session.update(usuario);
+		session.getTransaction().commit();
+	}
+	
 	
 	
 }

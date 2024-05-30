@@ -323,7 +323,9 @@ public class MAIN {
 		System.out.println("4 - Añadir Consolas");
 		System.out.println("5 - Eliminar Consola");
 		System.out.println("6 - Modificar Consola");
-		System.out.println("7 - Salir");
+		System.out.println("7 - Eliminar Usuario");
+		System.out.println("8 - Modificar Usuario");
+		System.out.println("9 - Salir");
 		opcion = lector.nextInt();
 		switch (opcion) {
 		case 1:
@@ -337,6 +339,7 @@ public class MAIN {
 			break;
 		case 3:
 			System.out.println("Indica el videojuego que deseas modificar:");
+			modificarVideojuego();
 			break;
 		case 4:
 			System.out.println("Introduce los datos de la consola que deseas añadir:");
@@ -351,6 +354,12 @@ public class MAIN {
 			System.out.println("Indica la consola que deseas modificar:");
 			break;
 		case 7:
+			System.out.println("Indica el usuario que desee borrar:");
+			break;
+		case 8:
+			System.out.println("Indica el usuario que deseas modificar:");
+			break;
+		case 9:
 			System.out.println("Has salido");
 			lector.nextLine();
 			menú();
@@ -366,8 +375,8 @@ public class MAIN {
 		Session session = crearSesion();
 		VideogameRepositorio videogame = new VideogameRepositorio(session);
 
-		List<Videogames> Allvideojuegos = videogame.findVideogamesByConsoleId(1);
-		// List<Videogames> Allvideojuegos = videogame.findAll();
+		//List<Videogames> Allvideojuegos = videogame.findVideogamesByConsoleId(1);
+		 List<Videogames> Allvideojuegos = videogame.findAll();
 		for (Videogames videogames : Allvideojuegos) {
 			System.out.println(videogames.id_videogame + " - " + videogames.nombre);
 		}
@@ -384,49 +393,7 @@ public class MAIN {
 		videogame.deleteById(opcion);
 
 	}
-
-	public static void crearConsola(Console consola) {
-
-		Session session = crearSesion();
-		ConsoleRepositorio consolrep = new ConsoleRepositorio(session);
-		consolrep.save(consola);
-	}
-
-	public static void guardarConsola() {
-		Console consola = new Console();
-		lector.nextLine();
-		System.out.println("Inserte el nombre de la consola:");
-		consola.setNombre(lector.nextLine());
-		Session session = crearSesion();
-		ConsoleRepositorio consolerep = new ConsoleRepositorio(session);
-		consolerep.save(consola);
-		System.out.println("Se añadido la consola correctamente :)");
-		mostrarConsolas();
-
-		System.out.println("");
-
-		panelAdministrador();
-	}
 	
-	public static void borrarConsola() {
-		Session session = crearSesion();
-		ConsoleRepositorio console = new ConsoleRepositorio(session);
-		
-		System.out.println("Que consola quieres borrar:");
-		int opcion = lector.nextInt();
-		
-		console.deleteById(opcion);
-		
-		System.out.println("Se ha borrado correctamente su consola");
-		
-		mostrarConsolas();
-		
-		System.out.println("");
-		
-		panelAdministrador();
-		
-		}
-
 	public static void crearVideogame(Videogames videogame) {
 		Session session = crearSesion();
 		VideogameRepositorio videorep = new VideogameRepositorio(session);
@@ -478,5 +445,104 @@ public class MAIN {
 
 		panelAdministrador();
 	}
+	
+	public static void modificarVideojuego() {
+		Session session = crearSesion();
+		VideogameRepositorio videogamerep = new VideogameRepositorio(session);
+		
+		System.out.println("Que videojuego desea modificar?");
+		mostrarVideojuegos();
+		int opcion = lector.nextInt();
+		
+		
+		
+		videogamerep.findOneById(opcion);
+		Videogames videogame = videogamerep.findOneById(opcion);
+		System.out.println("Que dato desea modificar:");
+		
+		int opcion1 = 0;
+		System.out.println("1 - Cambiar nombre");
+		System.out.println("2 - Cambiar información");
+		System.out.println("3 - Cambiar precio");
+		System.out.println("4 - Cambiar precio mínimo");
+		System.out.println("5 - Cambiar precio máximo");
+		System.out.println("6 - Salir");
+		opcion1 = lector.nextInt();
+		lector.nextLine();
+		switch (opcion1) {
+		case 1:
+			System.out.println("Escribe el nuevo nombre");
+			String nombre = lector.nextLine();
+			videogame.setNombre(nombre);
+			String informacion = videogame.getInformacion();
+			videogame.setInformacion(informacion);
+			videogamerep.updateById(opcion, videogame);
+			break;
+		case 2:
+			System.out.println("Escribe la nueva información");
+			break;
+		case 3:
+			System.out.println("Escribe el nuevo precio");
+			break;
+		case 4:
+			System.out.println("Escribe el nuevo precio mínimo");
+			break;
+		case 5:
+			System.out.println("Escribe el nuevo precio máximo");
+			break;
+		case 6:
+			System.out.println("Has salido");
+			lector.nextLine();
+			menú();
+			break;
+		default:
+			System.out.println("Opción no válida");
+			break;
+		}
+		
+	}
+	
+	
+	public static void crearConsola(Console consola) {
+
+		Session session = crearSesion();
+		ConsoleRepositorio consolrep = new ConsoleRepositorio(session);
+		consolrep.save(consola);
+	}
+
+	public static void guardarConsola() {
+		Console consola = new Console();
+		lector.nextLine();
+		System.out.println("Inserte el nombre de la consola:");
+		consola.setNombre(lector.nextLine());
+		Session session = crearSesion();
+		ConsoleRepositorio consolerep = new ConsoleRepositorio(session);
+		consolerep.save(consola);
+		System.out.println("Se añadido la consola correctamente :)");
+		mostrarConsolas();
+
+		System.out.println("");
+
+		panelAdministrador();
+	}
+	
+	public static void borrarConsola() {
+		Session session = crearSesion();
+		ConsoleRepositorio console = new ConsoleRepositorio(session);
+		
+		System.out.println("Que consola quieres borrar:");
+		int opcion = lector.nextInt();
+		
+		console.deleteById(opcion);
+		
+		System.out.println("Se ha borrado correctamente su consola");
+		
+		mostrarConsolas();
+		
+		System.out.println("");
+		
+		panelAdministrador();
+		
+		}
 
 }

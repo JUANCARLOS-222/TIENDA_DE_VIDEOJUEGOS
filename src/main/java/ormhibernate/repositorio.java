@@ -8,7 +8,7 @@ public interface repositorio<T> {
 	List<T> findAll();
 	T findOneById(int id);
 	void save(T t);
-	/*void updateById(int id, T t);*/
+	void updateById(int id, T t);
 	void deleteById(int id);
 	}
 
