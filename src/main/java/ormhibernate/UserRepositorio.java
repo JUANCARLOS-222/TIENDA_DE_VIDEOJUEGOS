@@ -49,7 +49,7 @@ public class UserRepositorio implements repositorio<User>{
         session.clear();
         User usuario = new User();
         usuario.setId_usuario(id_usuario);
-        session.delete(id_usuario);
+        session.delete(usuario);
         session.getTransaction().commit();
 
     }

@@ -49,7 +49,7 @@ public class ConsoleRepositorio implements repositorio<Console>{
         session.clear();
         Console consola = new Console();
         consola.setIdConsola(id_consola);
-        session.delete(id_consola);
+        session.delete(consola);
         session.getTransaction().commit();
 
     }

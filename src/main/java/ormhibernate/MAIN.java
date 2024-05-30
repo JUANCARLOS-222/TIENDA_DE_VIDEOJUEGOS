@@ -42,13 +42,10 @@ public class MAIN {
 	}
 
 	public static Session crearSesion() {
-		System.out.println("\nIniciando configuración hibernate...");
 		final StandardServiceRegistry registro = new StandardServiceRegistryBuilder().configure().build();
 		final SessionFactory factory = new MetadataSources(registro).buildMetadata().buildSessionFactory();
 		LogManager.getLogManager().reset();
-		System.out.println("\nAbriendo conexión a BD...");
 		final Session session = factory.openSession();
-		System.out.println("\nConexión abierta a BD...\n\n");
 		return session;
 	}
 
@@ -217,7 +214,7 @@ public class MAIN {
 	}
 
 	public static void verCatalogo() {
-
+		lector.nextLine();
 		String mensaje = "Este es nuestro catalogo";
 		int longitud = mensaje.length();
 
@@ -241,7 +238,7 @@ public class MAIN {
 		 * console2.nombre + " "); }
 		 */
 		mostrarConsolas();
-		System.out.println("6 Salir");
+		
 
 	}
 
@@ -257,13 +254,14 @@ public class MAIN {
 
 	public static void catalogo() {
 		try {
-			int opcion = 0;
-			while (opcion != 6) {
-
+			int opcion = Integer.MAX_VALUE;
+			while (opcion != 0) {
 				verCatalogo();
+				System.out.println("0 Salir");
+
 				opcion = lector.nextInt();
 
-				if (opcion == 6) {
+				if (opcion == 0) {
 					panelUsuario();
 				} else {
 					Session session = crearSesion();
@@ -319,29 +317,40 @@ public class MAIN {
 
 	public static void panelAdministrador() {
 		int opcion = 0;
-		System.out.println("1 - Eliminar videojuego");
-		System.out.println("2 - Añadir videojuego");
-		System.out.println("3 - Modificar catálogo");
-		System.out.println("4 - Modificar videojuego");
-		System.out.println("5 - Salir");
+		System.out.println("1 - Añadir Videojuego");
+		System.out.println("2 - Eliminar Videojuego");
+		System.out.println("3 - Modificar Videojuego");
+		System.out.println("4 - Añadir Consolas");
+		System.out.println("5 - Eliminar Consola");
+		System.out.println("6 - Modificar Consola");
+		System.out.println("7 - Salir");
 		opcion = lector.nextInt();
 		switch (opcion) {
 		case 1:
-			System.out.println("Selecciona el videojuego que deseas borrar");
+			System.out.println("Introduce los datos del juego que deseas añadir:");
+			guardarVideojuego();
+			break;
+		case 2:
+			System.out.println("Selecciona el videojuego que deseas borrar:");
 			mostrarVideojuegos();
 			borrarVideojuegos();
 			break;
-		case 2:
-			System.out.println("Introduce los datos del juego que deseas añadir");
-			guardarVideojuego();
-			break;
 		case 3:
-			System.out.println("Modificar catálogo");
+			System.out.println("Indica el videojuego que deseas modificar:");
 			break;
 		case 4:
-			System.out.println("Modificar videojuego");
+			System.out.println("Introduce los datos de la consola que deseas añadir:");
+			guardarConsola();
 			break;
 		case 5:
+			System.out.println("Selecciona la consola que deseas eliminar:");
+			mostrarConsolas();
+			borrarConsola();
+			break;
+		case 6:
+			System.out.println("Indica la consola que deseas modificar:");
+			break;
+		case 7:
 			System.out.println("Has salido");
 			lector.nextLine();
 			menú();
@@ -383,6 +392,41 @@ public class MAIN {
 		consolrep.save(consola);
 	}
 
+	public static void guardarConsola() {
+		Console consola = new Console();
+		lector.nextLine();
+		System.out.println("Inserte el nombre de la consola:");
+		consola.setNombre(lector.nextLine());
+		Session session = crearSesion();
+		ConsoleRepositorio consolerep = new ConsoleRepositorio(session);
+		consolerep.save(consola);
+		System.out.println("Se añadido la consola correctamente :)");
+		mostrarConsolas();
+
+		System.out.println("");
+
+		panelAdministrador();
+	}
+	
+	public static void borrarConsola() {
+		Session session = crearSesion();
+		ConsoleRepositorio console = new ConsoleRepositorio(session);
+		
+		System.out.println("Que consola quieres borrar:");
+		int opcion = lector.nextInt();
+		
+		console.deleteById(opcion);
+		
+		System.out.println("Se ha borrado correctamente su consola");
+		
+		mostrarConsolas();
+		
+		System.out.println("");
+		
+		panelAdministrador();
+		
+		}
+
 	public static void crearVideogame(Videogames videogame) {
 		Session session = crearSesion();
 		VideogameRepositorio videorep = new VideogameRepositorio(session);
@@ -391,12 +435,12 @@ public class MAIN {
 
 	public static void guardarVideojuego() {
 		Videogames videojuego = new Videogames();
+		lector.nextLine();
 		System.out.println("Inserte el nombre del videojuego:");
 		videojuego.setNombre(lector.nextLine());
-		lector.nextLine();
 		System.out.println("Inserte la informacion sobre su videojuego:");
 		videojuego.setInformacion(lector.nextLine());
-		lector.nextLine();
+		// lector.nextLine();
 		System.out.println("Introduce el precio de su videojuego:");
 		videojuego.setPrecio(lector.nextFloat());
 		lector.nextLine();
@@ -417,9 +461,8 @@ public class MAIN {
 		for (int i = 0; i < resp; i++) {
 			System.out.println("Escoge la consola");
 			int eleccion = lector.nextInt();
-			lector.nextInt();
+			// lector.nextInt();
 			Console co = consolerep.findOneById(eleccion);
-			System.out.println(co.id_consola + " hola");
 			if (co != null) {
 				lista.add(co);
 			}
@@ -429,6 +472,11 @@ public class MAIN {
 		VideogameRepositorio videorep = new VideogameRepositorio(session);
 		videorep.save(videojuego);
 
+		mostrarVideojuegos();
+
+		System.out.println("");
+
+		panelAdministrador();
 	}
 
 }
