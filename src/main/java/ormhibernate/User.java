@@ -70,6 +70,13 @@ public class User {
 		this.id_usuario = id_usuario;
 	}
 	
+	public int getId_perfiles() {
+		return id_perfiles;
+	}
+	
+	public void setId_perfiles(int id_perfiles) {
+		this.id_perfiles = id_perfiles;
+	}
 	
 	
 	

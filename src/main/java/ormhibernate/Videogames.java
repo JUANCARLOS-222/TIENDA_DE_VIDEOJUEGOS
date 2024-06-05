@@ -63,7 +63,18 @@ public class Videogames {
         this.consoles = consoles;
     }
     
-    public void setPrecio(float precio) {
+    
+    
+    public float getPrecio() {
+		return precio;
+	}
+	public float getPrecio_min() {
+		return precio_min;
+	}
+	public float getPrecio_max() {
+		return precio_max;
+	}
+	public void setPrecio(float precio) {
     	this.precio = precio;
     }
     

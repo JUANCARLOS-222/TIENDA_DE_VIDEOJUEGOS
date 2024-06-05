@@ -86,6 +86,8 @@ public class VideogameRepositorio implements repositorio<Videogames> {
 		session.update(videojuego);
 		session.getTransaction().commit();
 	}
+	
+	
 
 	
 	/*
