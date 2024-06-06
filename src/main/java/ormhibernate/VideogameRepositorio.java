@@ -46,7 +46,6 @@ public class VideogameRepositorio implements repositorio<Videogames> {
 		session.clear();
 		Videogames videojuego = new Videogames();
 		videojuego.setIdVideogame(id_videogame);
-		System.out.println(id_videogame);
 		session.delete(videojuego);
 		session.getTransaction().commit();
 

@@ -74,12 +74,7 @@ public class MAIN {
 					Session session = crearSesion();
 
 					UserRepositorio userrep = new UserRepositorio(session);
-					List<User> listaUsuarios = userrep.findAll();
-					if (listaUsuarios.size() == 0) {
-						user.setId_perfiles(1);
-						System.out.println(
-								"Enhorabuena, ha creado el primer usuario de esta tienda. Para crear otro usuario administrador, pongase en contacto con atención al cliente");
-					}
+					
 					userrep.save(user);
 
 					/* Session session = crearSesion(); */
@@ -193,6 +188,7 @@ public class MAIN {
 				break;
 			case 3:
 				System.out.println("Has salido");
+				System.exit(0);
 				break;
 			default:
 				System.err.println("No es una opción válida");
@@ -258,6 +254,16 @@ public class MAIN {
 			System.out.println(console2.id_consola + " " + console2.nombre + " ");
 		}
 	}
+	
+	public static void mostrarUsuarios() {
+		Session session = crearSesion();
+		UserRepositorio user = new UserRepositorio(session);
+		List<User> user1 = user.findAll();
+
+		for (User user2 : user1) {
+			System.out.println(user2.id_usuario + " " + user2.nombre + " ");
+		}
+	}
 
 	/*
 	 * public static List<Videogames> panelCatalogo() { verCatalogo();
@@ -290,7 +296,7 @@ public class MAIN {
 				Allvideojuegos = videogame.findVideogamesByConsoleId(opcion);
 				// List<Videogames> Allvideojuegos = videogame.findAll();
 				for (Videogames videogames : Allvideojuegos) {
-					System.out.println(videogames.nombre);
+					System.out.println(videogames.id_videogame + " " + videogames.nombre);
 				}
 			}
 
@@ -299,6 +305,40 @@ public class MAIN {
 			System.err.println("Elige una de las opciones");
 			lector.nextLine();
 			catalogo();
+			return null;
+		}
+
+	}
+
+	public static List<Videogames> catalogoAdmin() {
+		try {
+			List<Videogames> Allvideojuegos = new ArrayList<Videogames>();
+			int opcion = Integer.MAX_VALUE;
+
+			verCatalogo();
+
+			System.out.println("0 Salir");
+
+			opcion = lector.nextInt();
+
+			if (opcion == 0) {
+				panelAdministrador();
+			} else {
+				Session session = crearSesion();
+				VideogameRepositorio videogame = new VideogameRepositorio(session);
+
+				Allvideojuegos = videogame.findVideogamesByConsoleId(opcion);
+				// List<Videogames> Allvideojuegos = videogame.findAll();
+				for (Videogames videogames : Allvideojuegos) {
+					System.out.println(videogames.id_videogame + " " + videogames.nombre);
+				}
+			}
+
+			return Allvideojuegos;
+		} catch (InputMismatchException e) {
+			System.err.println("Elige una de las opciones");
+			lector.nextLine();
+			catalogoAdmin();
 			return null;
 		}
 
@@ -318,21 +358,73 @@ public class MAIN {
 
 	public static void comprarVideojuego(List<Videogames> listaVideojuegos) {
 		System.out.println("Escoge un videojuego");
+		lector.nextLine();
 		int opcion = lector.nextInt();
 		try {
-		if (listaVideojuegos.size() > 0) {
-			for (Videogames videogames : listaVideojuegos) {
-				if (videogames.id_videogame == opcion) {
-					carrito.añadirVideojuego(videogames);
-					System.out.println("Juego añadido: " + videogames.getNombre());
+			if (listaVideojuegos.size() > 0) {
+				for (Videogames videogames : listaVideojuegos) {
+					if (videogames.getIdVideogame() == opcion) {
+						carrito.añadirVideojuego(videogames);
+						System.out.println("Juego añadido: " + videogames.getNombre());
+					}
 				}
+			} else {
+				System.out.println("El tamaño de la lista es: " + listaVideojuegos.size());
 			}
-		} else {
-			System.out.println("El tamaño de la lista es: " + listaVideojuegos.size());
-		}
-		}catch(Exception e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+
+	public static void seguirComprando() {
+		lector.nextLine();
+		System.out.println("Quiere seguir comprando? (S/N)");
+		String resp1 = lector.nextLine();
+		resp1 = resp1.toUpperCase();
+		if (resp1.equals("S")) {
+			MAIN.panelUsuario();
+		} else if (resp1.equals("N")) {
+			datosTarjeta();
+		} else {
+			System.out.println("Responde con una 'S' o una 'N'");
+		}
+	}
+
+	public static void datosTarjeta() {
+		try {
+			VISA visa = new VISA();
+			System.out.println("Introduce el número de tu tarjeta");
+			visa.setNumeroTarjeta(lector.nextInt());
+			lector.nextLine();
+			System.out.println("Introduce el titular de la tarjeta");
+			visa.setTitularTarjeta(lector.nextLine());
+			System.out.println("Introduce la fecha de caducidad MM/YY");
+			visa.setFechaCaducidad(lector.nextLine());
+			Pattern p = Pattern.compile("^(0[1-9]|1[0-2])/\\d{2}$");
+			Matcher m = p.matcher(visa.getFechaCaducidad());
+
+			if (m.matches()) {
+				System.out.println("Introduce el C.V.V");
+				visa.setNumeroCVV(lector.nextLine());
+				Pattern p1 = Pattern.compile("^[0-9]{3}$");
+				Matcher m1 = p1.matcher(visa.getNumeroCVV());
+				if (m1.matches()) {
+					System.out.println("Has comprado los videojuegos correctamente.");
+					carrito.vaciarCarrito();
+				} else {
+					System.err.println("Introduce el C.V.V correctamente");
+					panelUsuario();
+				}
+			} else {
+				System.err.println("Introduce bien la fecha");
+				panelUsuario();
+			}
+		} catch (InputMismatchException e) {
+			System.err.println("Introduce correctamente los datos.");
+			lector.nextLine();
+			panelUsuario();
+		}
+
 	}
 
 	public static void panelUsuario() {
@@ -354,7 +446,9 @@ public class MAIN {
 				comprarVideojuego(listaVideojuegos);
 				break;
 			case 3:
-				System.out.println("Vender videojuego");
+				// System.out.println("Vender videojuego");
+				System.out.println("Introduce los datos del juego que deseas vender");
+				venderVideojuego();
 				break;
 			case 4:
 				// System.out.println("Ver carrito");
@@ -377,56 +471,73 @@ public class MAIN {
 
 	public static void panelAdministrador() {
 		int opcion = 0;
-		System.out.println("1 - Añadir Videojuego");
-		System.out.println("2 - Eliminar Videojuego");
-		System.out.println("3 - Modificar Videojuego");
-		System.out.println("4 - Añadir Consolas");
-		System.out.println("5 - Eliminar Consola");
-		System.out.println("6 - Modificar Consola");
-		System.out.println("7 - Eliminar Usuario");
-		System.out.println("8 - Modificar Usuario");
-		System.out.println("9 - Salir");
-		opcion = lector.nextInt();
-		switch (opcion) {
-		case 1:
-			System.out.println("Introduce los datos del juego que deseas añadir");
-			guardarVideojuego();
-			break;
-		case 2:
-			System.out.println("Selecciona el videojuego que deseas borrar");
-			mostrarVideojuegos();
-			borrarVideojuegos();
-			break;
-		case 3:
-			System.out.println("Indica el videojuego que deseas modificar");
-			modificarVideojuego();
-			break;
-		case 4:
-			System.out.println("Introduce los datos de la consola que deseas añadir");
-			guardarConsola();
-			break;
-		case 5:
-			System.out.println("Selecciona la consola que deseas eliminar");
-			mostrarConsolas();
-			borrarConsola();
-			break;
-		case 6:
-			System.out.println("Indica la consola que deseas modificar");
-			break;
-		case 7:
-			System.out.println("Indica el usuario que desee borrar");
-			break;
-		case 8:
-			System.out.println("Indica el usuario que deseas modificar");
-			break;
-		case 9:
-			System.out.println("Has salido");
-			lector.nextLine();
-			menú();
-			break;
-		default:
-			System.out.println("Opción no válida");
-			break;
+		while (opcion != 12) {
+			System.out.println("1 - Añadir Videojuego");
+			System.out.println("2 - Eliminar Videojuego");
+			System.out.println("3 - Modificar Videojuego");
+			System.out.println("4 - Añadir Consolas");
+			System.out.println("5 - Eliminar Consola");
+			System.out.println("6 - Modificar Consola");
+			System.out.println("7 - Eliminar Usuario");
+			System.out.println("8 - Modificar Usuario");
+			System.out.println("9 - Ver videojuegos");
+			System.out.println("10 - Ver Usuarios");
+			System.out.println("11 - Ver consolas");
+			System.out.println("12 - Salir");
+			opcion = lector.nextInt();
+			switch (opcion) {
+			case 1:
+				System.out.println("Introduce los datos del juego que deseas añadir");
+				guardarVideojuego();
+				break;
+			case 2:
+				System.out.println("Selecciona el videojuego que deseas borrar");
+				mostrarVideojuegos();
+				borrarVideojuegos();
+				break;
+			case 3:
+				System.out.println("Indica el videojuego que deseas modificar");
+				modificarVideojuego();
+				break;
+			case 4:
+				System.out.println("Introduce los datos de la consola que deseas añadir");
+				guardarConsola();
+				break;
+			case 5:
+				System.out.println("Selecciona la consola que deseas eliminar");
+				mostrarConsolas();
+				borrarConsola();
+				break;
+			case 6:
+				System.out.println("Indica la consola que deseas modificar");
+				break;
+			case 7:
+				System.out.println("Indica el usuario que desee eliminar");
+				mostrarUsuarios();
+				borrarUsuario();
+				break;
+			case 8:
+				System.out.println("Indica el usuario que deseas modificar");
+				break;
+			case 9:
+				mostrarVideojuegos();
+				break;
+			case 10:
+				mostrarUsuarios();
+				break;
+			case 11:
+				mostrarConsolas();
+				break;
+			case 12:
+				System.out.println("Has salido");
+				lector.nextLine();
+				menú();
+				break;
+			default:
+				System.out.println("Opción no válida");
+				break;
+			}
+
 		}
 
 	}
@@ -451,6 +562,8 @@ public class MAIN {
 		int opcion = lector.nextInt();
 
 		videogame.deleteById(opcion);
+		System.out.println("El juego se ha borrado correctamente");
+		panelAdministrador();
 
 	}
 
@@ -504,6 +617,52 @@ public class MAIN {
 		System.out.println("");
 
 		panelAdministrador();
+	}
+
+	public static void venderVideojuego() {
+		Videogames videojuego = new Videogames();
+		lector.nextLine();
+		System.out.println("Inserte el nombre del videojuego:");
+		videojuego.setNombre(lector.nextLine());
+		System.out.println("Inserte la informacion sobre su videojuego:");
+		videojuego.setInformacion(lector.nextLine());
+		// lector.nextLine();
+		System.out.println("Introduce el precio de su videojuego:");
+		videojuego.setPrecio(lector.nextFloat());
+		lector.nextLine();
+		System.out.println("Inserte el precio minimo de su videojuego:");
+		videojuego.setPrecio_min(lector.nextFloat());
+		lector.nextLine();
+		System.out.println("Inserte el precio maximo de su videojuego:");
+		videojuego.setPrecio_max(lector.nextFloat());
+		lector.nextLine();
+		System.out.println("A cuantas consolas va a pertenecer su videojuego");
+		int resp = lector.nextInt();
+		lector.nextLine();
+		mostrarConsolas();
+
+		Session session = crearSesion();
+		ConsoleRepositorio consolerep = new ConsoleRepositorio(session);
+		List<Console> lista = new ArrayList<Console>();
+		for (int i = 0; i < resp; i++) {
+			System.out.println("Escoge la consola");
+			int eleccion = lector.nextInt();
+			// lector.nextInt();
+			Console co = consolerep.findOneById(eleccion);
+			if (co != null) {
+				lista.add(co);
+			}
+		}
+		Set<Console> consolas = new HashSet<Console>(lista);
+		videojuego.setConsoles(consolas);
+		VideogameRepositorio videorep = new VideogameRepositorio(session);
+		videorep.save(videojuego);
+
+		mostrarVideojuegos();
+
+		System.out.println("");
+
+		panelUsuario();
 	}
 
 	public static void modificarVideojuego() {
@@ -601,5 +760,27 @@ public class MAIN {
 		panelAdministrador();
 
 	}
+	
+	public static void borrarUsuario() {
+		Session session = crearSesion();
+		UserRepositorio user = new UserRepositorio(session);
+
+		System.out.println("Que usuario quieres borrar:");
+		int opcion = lector.nextInt();
+
+		user.deleteById(opcion);
+
+		System.out.println("Se ha borrado correctamente el usuario");
+
+		mostrarUsuarios();
+
+		System.out.println("");
+
+		panelAdministrador();
+
+	}
+	
+
+	
 
 }

@@ -14,6 +14,7 @@ public class User {
 	String email;
 	String contrasenya;
 	int id_perfiles;
+	int id_tarjeta;
 	
 	public User(String nombre, String apellido, int numeroTelefono, String email, String contrasenya, int id_perfiles ) {
 		this.nombre = nombre;
@@ -77,7 +78,6 @@ public class User {
 	public void setId_perfiles(int id_perfiles) {
 		this.id_perfiles = id_perfiles;
 	}
-	
 	
 	
 }

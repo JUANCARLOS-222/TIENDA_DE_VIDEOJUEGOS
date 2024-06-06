@@ -26,9 +26,9 @@ public class Videogames {
 	private Set<Console> consoles = new HashSet<Console>();
 	
 	
-	public Videogames(int id_videojuego, String nombre, String informacion) {
+	public Videogames(int id_videogame, String nombre, String informacion) {
 		this.nombre = nombre;
-		this.id_videogame = id_videojuego;
+		this.id_videogame = id_videogame;
 		this.informacion = informacion;	
 	}
 	public Videogames() {
@@ -47,8 +47,8 @@ public class Videogames {
 		return id_videogame;
 	}
 	
-	public  void setIdVideogame(int id_videojuego) {
-		this.id_videogame = id_videojuego;
+	public  void setIdVideogame(int id_videogame) {
+		this.id_videogame = id_videogame;
 	}
 	
 	public String getInformacion() {
