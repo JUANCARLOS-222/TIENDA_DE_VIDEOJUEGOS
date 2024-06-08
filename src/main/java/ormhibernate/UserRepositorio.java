@@ -60,8 +60,9 @@ public class UserRepositorio implements repositorio<User>{
 
 		Query<User> query = session.createQuery(hql, User.class);
 		query.setParameter("id", id);
+		User user = query.uniqueResult();
 		session.getTransaction().commit();
-		return new User();
+		return user;
 		
 	}
 	

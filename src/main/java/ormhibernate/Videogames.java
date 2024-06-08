@@ -63,7 +63,9 @@ public class Videogames {
         this.consoles = consoles;
     }
     
-    
+    public Set<Console> getConsoles() {
+    	return consoles;
+    }
     
     public float getPrecio() {
 		return precio;

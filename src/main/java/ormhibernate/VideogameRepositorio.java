@@ -73,15 +73,15 @@ public class VideogameRepositorio implements repositorio<Videogames> {
 
 		Query<Videogames> query = session.createQuery(hql, Videogames.class);
 		query.setParameter("id", id);
+		Videogames videogame = query.uniqueResult();
 		session.getTransaction().commit();
-		return new Videogames();
+		return videogame;
 		
 	}
 	
 	public void updateById(int id, Videogames videojuego) {//actualizar por ID
 		// TODO Auto-generated method stub
 		session.beginTransaction();
-		videojuego.setIdVideogame(id);
 		session.update(videojuego);
 		session.getTransaction().commit();
 	}

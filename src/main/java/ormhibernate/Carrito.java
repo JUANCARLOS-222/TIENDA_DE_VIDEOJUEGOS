@@ -44,4 +44,7 @@ public class Carrito {
 	        }
 	    }
 	 
+	 public List<Videogames> getCarrito() {
+		 return listaVideojuegos;
+	 }
 }

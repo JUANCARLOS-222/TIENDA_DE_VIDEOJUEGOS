@@ -45,7 +45,10 @@ public class Console {
         this.videogames = videogames;
     }
 	
-	
+	public void removeVideogame(Videogames videogame) {
+		this.videogames.remove(videogame);
+		videogame.getConsoles().remove(this);
+	}
 	
 	
 }

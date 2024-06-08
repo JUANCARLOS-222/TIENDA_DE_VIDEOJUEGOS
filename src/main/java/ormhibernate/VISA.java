@@ -8,18 +8,19 @@ import javax.persistence.*;
 public class VISA {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	int numeroTarjeta;
-	String titularTarjeta;
-	String fechaCaducidad;
+	int numero_tarjeta;
+	String titular_tarjeta;
+	String fecha_caducidad;
 	String numeroCVV;
 
-	@OneToOne(mappedBy="visa", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@OneToOne
+	@JoinColumn(name="id_usuario")
 	private User user;
 	
-	public VISA(int numeroTarjeta, String titularTarjeta, String fechaCaducidad, String numeroCVV) {
-		this.titularTarjeta = titularTarjeta;
-		this.numeroTarjeta = numeroTarjeta;
-		this.fechaCaducidad = fechaCaducidad;
+	public VISA(int numero_tarjeta, String titular_tarjeta, String fecha_caducidad, String numeroCVV) {
+		this.titular_tarjeta = titular_tarjeta;
+		this.numero_tarjeta = numero_tarjeta;
+		this.fecha_caducidad = fecha_caducidad;
 		this.numeroCVV = numeroCVV;
 	}
 
@@ -28,27 +29,27 @@ public class VISA {
 	}
 
 	public int getNumeroTarjeta() {
-		return numeroTarjeta;
+		return numero_tarjeta;
 	}
 
-	public void setNumeroTarjeta(int numeroTarjeta) {
-		this.numeroTarjeta = numeroTarjeta;
+	public void setNumeroTarjeta(int numero_tarjeta) {
+		this.numero_tarjeta = numero_tarjeta;
 	}
 
 	public String getTitularTarjeta() {
-		return titularTarjeta;
+		return titular_tarjeta;
 	}
 
-	public void setTitularTarjeta(String titularTarjeta) {
-		this.titularTarjeta = titularTarjeta;
+	public void setTitularTarjeta(String titular_tarjeta) {
+		this.titular_tarjeta = titular_tarjeta;
 	}
 
 	public String getFechaCaducidad() {
-		return fechaCaducidad;
+		return fecha_caducidad;
 	}
 
-	public void setFechaCaducidad(String fechaCaducidad) {
-		this.fechaCaducidad = fechaCaducidad;
+	public void setFechaCaducidad(String fecha_caducidad) {
+		this.fecha_caducidad = fecha_caducidad;
 	}
 
 	public String getNumeroCVV() {
@@ -58,7 +59,15 @@ public class VISA {
 	public void setNumeroCVV(String numeroCVV) {
 		this.numeroCVV = numeroCVV;
 	}
-	
+		
+	/*public int getId_usuario() {
+		return id_usuario;
+	}
+
+	public void setId_usuario(int id_usuario) {
+		this.id_usuario = id_usuario;
+	}*/
+
 	public User getUser() {
         return user;
     }
